@@ -1,6 +1,5 @@
 #include "RMT_WS2812.hpp"
 
-
 uint32_t RMT_WS2812::ws2812_t0h_ticks;
 uint32_t RMT_WS2812::ws2812_t1h_ticks;
 uint32_t RMT_WS2812::ws2812_t0l_ticks;
@@ -37,7 +36,7 @@ void IRAM_ATTR RMT_WS2812::ws2812_rmt_adapter(const void *src, rmt_item32_t *des
 
 void RMT_WS2812::initialize() {
 	rmt_config_t rmtConf = RMT_DEFAULT_CONFIG_TX(_rmtGpio, _rmtChannel);
-	rmtConf.clk_div	 = 3;  // Set 40MHz
+	rmtConf.clk_div	 = _clk_div;  // Set 40MHz
 
 	ESP_ERROR_CHECK(rmt_config(&rmtConf));
 	ESP_ERROR_CHECK(rmt_driver_install(rmtConf.channel, 0, 0));
@@ -82,6 +81,8 @@ RMT_WS2812::RMT_WS2812(rmt_channel_t channel, gpio_num_t gpio, uint16_t ledNum) 
 	_rmtGpio	  = gpio;
 	_ledNum	  = ledNum;
 
+	_clk_div = 2;
+
 	initialize();
 };
 
@@ -91,16 +92,19 @@ RMT_WS2812::RMT_WS2812(esp_board esp) {
 			_rmtChannel = RMT_CHANNEL_0;
 			_rmtGpio	  = GPIO_NUM_35;
 			_ledNum	  = 1;
+			_clk_div	  = 3;
 			break;
 		case esp_board::ATOM_Matrix:
 			_rmtChannel = RMT_CHANNEL_0;
 			_rmtGpio	  = GPIO_NUM_27;
 			_ledNum	  = 25;
+			_clk_div	  = 2;
 			break;
 		case esp_board::STAMP_C3:
 			_rmtChannel = RMT_CHANNEL_0;
 			_rmtGpio	  = GPIO_NUM_2;
 			_ledNum	  = 1;
+			_clk_div	  = 2;
 			break;
 	}
 
@@ -108,7 +112,7 @@ RMT_WS2812::RMT_WS2812(esp_board esp) {
 };
 
 esp_err_t RMT_WS2812::clear(uint32_t timeout_ms) {
-	for(int i=0; i<_ledNum * 3; i++) _buffer[i] = 0;
+	for (int i = 0; i < _ledNum * 3; i++) _buffer[i] = 0;
 	return refresh(timeout_ms);
 }
 

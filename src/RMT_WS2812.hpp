@@ -4,6 +4,7 @@
 #include "driver/rmt.h"
 
 class RMT_WS2812 {
+	public:
 	enum class esp_board {
 		ATOMS3_lite,
 		ATOM_Matrix,
@@ -12,6 +13,7 @@ class RMT_WS2812 {
 
     private:
 	static void IRAM_ATTR ws2812_rmt_adapter(const void *src, rmt_item32_t *dest, size_t src_size, size_t wanted_num, size_t *translated_size, size_t *item_num);
+	int _clk_div;
 	void initialize();
 
 	static uint32_t ws2812_t0h_ticks;
