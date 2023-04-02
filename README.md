@@ -16,9 +16,10 @@ idf_component_register(SRCS "main.cpp"
 void app_main(void) {
 	ESP_LOGI(tag, "Blink LED");
 	
-	RMT_WS2812 *led = new RMT_WS2812(esp_board::ATOMS3_lite);
+	RMT_WS2812 *led = new RMT_WS2812(RMT_WS2812::esp_board::ATOMS3_lite);
 	ESP_LOGI(tag, "%p", led);
 	led->clear();
+	led.setBrightness(CONFIG_MAX_BRIGHTNESS);
 
 	int color = 0;
 	while (true) {
